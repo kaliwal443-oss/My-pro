@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+  <circle
+      android:fillColor="#FF9800"
+      android:cx="8"
+      android:cy="8"
+      android:r="8"/>
+</vector>
