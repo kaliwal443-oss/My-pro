@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Indian Grid Navigation</string>
+    <string name="title_activity_satellite">Satellite Signals</string>
+    
+    <!-- Main Activity -->
+    <string name="refresh">Refresh</string>
+    <string name="satellite">Satellite</string>
+    <string name="route">Route</string>
+    <string name="settings">Settings</string>
+    
+    <!-- Satellite Activity -->
+    <string name="export_data">Export Data</string>
+    <string name="share">Share</string>
+    <string name="satellites">Satellites</string>
+    <string name="strong_signals">Strong Signals</string>
+    <string name="accuracy">Accuracy</string>
+    <string name="gnss_status">GNSS Status</string>
+    
+    <!-- Messages -->
+    <string name="loading_coordinates">Loading coordinates...</string>
+    <string name="loading_grid_coordinates">Loading grid coordinates...</string>
+    <string name="loading_location_details">Loading location details...</string>
+    <string name="unknown">Unknown</string>
+    <string name="excellent">Excellent</string>
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="poor">Poor</string>
+    
+    <!-- Settings -->
+    <string name="toggle_grid_overlay">Toggle Grid Overlay</string>
+    <string name="toggle_compass">Toggle Compass</string>
+    <string name="change_map_style">Change Map Style</string>
+    <string name="units_metric">Units: Metric</string>
+</resources>
