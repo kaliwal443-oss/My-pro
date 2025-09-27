@@ -1,0 +1,26 @@
+name: Setup Gradle Wrapper
+
+on:
+  workflow_dispatch:   # allows you to trigger it manually
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+
+      - name: Commit Gradle Wrapper
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add gradlew gradlew.bat gradle/wrapper/
+          git commit -m "Add gradle wrapper" || echo "No changes to commit"
+          git push
