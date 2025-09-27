@@ -1,0 +1,150 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.example.indiangridnavigation'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.indiangridnavigation"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // CI-friendly configuration
+        buildConfigField("String", "BUILD_TIME", "\"${getBuildTime()}\"")
+        buildConfigField("String", "GIT_SHA", "\"${getGitSha()}\"")
+        buildConfigField("String", "CI_BUILD", "\"${System.getenv('CI') ?: 'false'}\"")
+        
+        // Maps API key handling for CI
+        manifestPlaceholders = [googleMapsApiKey: System.getenv("GOOGLE_MAPS_API_KEY") ?: "ci_demo_key"]
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-DEBUG"
+            buildConfigField("boolean", "IS_CI", "${System.getenv('CI') ?: false}")
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("boolean", "IS_CI", "false")
+        }
+        ci {
+            initWith debug
+            applicationIdSuffix ".ci"
+            versionNameSuffix "-CI"
+            buildConfigField("boolean", "IS_CI", "true")
+            matchingFallbacks = ['debug']
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+    
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            all {
+                testLogging {
+                    events "passed", "skipped", "failed", "standardOut", "standardError"
+                    exceptionFormat "full"
+                }
+            }
+        }
+    }
+    
+    // For CI builds
+    lintOptions {
+        abortOnError false
+        warningsAsErrors true
+        checkDependencies true
+    }
+}
+
+// CI helper functions
+def getBuildTime() {
+    return new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+}
+
+def getGitSha() {
+    try {
+        return 'git rev-parse --short HEAD'.execute().text.trim()
+    } catch (Exception e) {
+        return "unknown"
+    }
+}
+
+dependencies {
+    // Core Android
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    
+    // Google Maps (conditional for CI)
+    if (!System.getenv('CI') || System.getenv('INCLUDE_MAPS') == 'true') {
+        implementation 'com.google.android.gms:play-services-maps:18.2.0'
+        implementation 'com.google.android.gms:play-services-location:21.0.1'
+        implementation 'com.google.maps.android:android-maps-utils:3.4.0'
+    } else {
+        // Mock implementation for CI
+        implementation 'com.google.android.gms:play-services-maps:18.2.0'
+    }
+    
+    // Charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    
+    // Lottie Animations
+    implementation 'com.airbnb.android:lottie:6.1.0'
+    
+    // Java 8+ API desugaring
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'androidx.test:core:1.5.0'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+    testImplementation 'io.mockk:mockk:1.13.5'
+    
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+// CI-specific task
+task ciBuild {
+    dependsOn 'clean', 'assembleCi', 'test', 'lint'
+    group = 'CI'
+    description = 'Runs CI build pipeline'
+}
+
+// Skip signing for CI
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('SigningConfig') && System.getenv('CI') == 'true') {
+        task.enabled = false
+    }
+}
