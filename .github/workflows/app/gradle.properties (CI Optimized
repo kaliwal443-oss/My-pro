@@ -1,0 +1,19 @@
+# Project-wide Gradle settings.
+org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.configureondemand=true
+
+# Android configuration
+android.useAndroidX=true
+android.enableJetifier=true
+android.enableR8=true
+
+# Kotlin configuration
+kotlin.code.style=official
+kotlin.incremental=true
+
+# CI-specific properties
+ci.build=true
+buildScan.termsOfServiceUrl=https://gradle.com/terms-of-service
+buildScan.termsOfServiceAgree=yes
